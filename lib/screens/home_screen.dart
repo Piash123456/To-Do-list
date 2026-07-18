@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'; // এটি নতুন যুক্ত করা হয়েছে
 import '../models/todo_model.dart';
 import '../services/todo_service.dart';
 import 'add_edit_screen.dart';
@@ -17,6 +18,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final TodoService _service = TodoService();
   List<Todo> _todos = [];
   bool _isLoading = true;
+  
+  // লগইন করা ইউজারের ডেটা নেওয়ার জন্য
+  final _currentUser = Supabase.instance.client.auth.currentUser;
 
   // Color palette
   static const Color primary = Color(0xFF6C63FF);
@@ -88,6 +92,19 @@ class _HomeScreenState extends State<HomeScreen> {
             expandedHeight: 160,
             pinned: true,
             backgroundColor: primary,
+            
+            // --- লগআউট বাটন যুক্ত করা হলো ---
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout_rounded, color: Colors.white),
+                tooltip: 'Logout',
+                onPressed: () async {
+                  await Supabase.instance.client.auth.signOut();
+                },
+              ),
+            ],
+            // ----------------------------------------
+
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: const BoxDecoration(
@@ -103,14 +120,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        
+                        // --- ইউজারের নাম দেখানো হলো ---
                         Text(
-                          'My Tasks',
+                          'Hi, ${_currentUser?.userMetadata?['name'] ?? 'User'} 👋',
                           style: GoogleFonts.poppins(
-                            fontSize: 32,
+                            fontSize: 28,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
+                        // ---------------------------------------
+                        
                         const SizedBox(height: 4),
                         Text(
                           '$_completedCount of ${_todos.length} completed',

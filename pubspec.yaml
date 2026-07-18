@@ -1,4 +1,4 @@
-name: To Do
+name: todo_app
 description: A beautiful Todo app with Supabase
 publish_to: 'none'
 version: 1.0.0+1
